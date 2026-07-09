@@ -1,34 +1,33 @@
-import os
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 
-# Import the standalone FastAPI application instances from your two separate files
-from crux.core.identity_scoring_api import app as identity_subapp
-from crux.core.parse_resume_api import app as resume_subapp
+from crux.io.db_and_models import engine, Base
+from crux.core.identity_scoring_api import router as identity_router
+from crux.core.parse_resume_api import router as resume_router
 
-# 1. Initialize the master gateway application instance
-app = FastAPI(
-    title="CRUX Unified Gateway Pipeline",
-    description="Unified API interface combining Phase 2 Identity Validation and Phase 3/4 Resume Parsing."
-)
+Base.metadata.create_all(bind=engine)
 
-# 2. Optional: Add global CORS middleware to allow your React frontend to communicate with both sub-apps
+app = FastAPI(title="CRUX Unified Gateway Pipeline",
+              description="Unified API interface combining Phase 2 Identity Validation and Phase 3/4 Resume Parsing.")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Adjust this to your specific React port (e.g., ["http://localhost:5173"]) in production
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"],
+    allow_headers=["*"]
 )
 
-# 3. Mount the independent apps as Sub-Applications onto the master port
-app.mount("/identity-service", identity_subapp)
-app.mount("/recruitment-service", resume_subapp)
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    errors = {err["loc"][-1]: {"required": err["type"] == "missing", "message": err["msg"]} for err in exc.errors()}
+    return JSONResponse(status_code=422, content={"success": False, "message": "Validation failed.", "errors": errors})
+
+app.include_router(identity_router, prefix="/identity-service")
+app.include_router(resume_router, prefix="/recruitment-service")
 
 if __name__ == "__main__":
     import uvicorn
-    # Automatically boots up the master gateway on port 8000
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
-    
-    
-    
