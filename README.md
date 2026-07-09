@@ -1,4 +1,4 @@
-# CRUX
+# CRUX: A Zero-Trust, Digital Polygraph System
 
 **AI-Enabled Pre-Offer Candidate Verification Platform**
 
