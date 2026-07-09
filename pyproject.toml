@@ -1,0 +1,16 @@
+[project]
+name = "crux"
+version = "0.1.0"
+description = ""
+authors = [
+    { name = "Navaneethan Ghanti", email = "navaneethan.ghanti@gmail.com" }
+]
+readme = "readme.md"
+requires-python = ">=3.8"
+dependencies = []
+
+[tool.setuptools.packages.find] 
+where = ["src"]
+
+[project.scripts]
+crux = "crux.__main__:main"
