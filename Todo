@@ -1,0 +1,47 @@
+CRUX - Scoring Mechanism
+- AI extracts discrete facts and anomalies; code calculates the score.
+
+
+- The Deterministic Scoring Engine Architecture
+[ Uploaded Docs / Data ]
+          │
+          ▼
+┌───────────────────────────┐
+│   AI Extraction Layer     │ ◄── Force deterministic outputs (Temp = 0)
+│  (Identifies Fact Flags)  │     Outputs ENUM flags, not numbers.
+└─────────┬─────────────────┘
+          │ (List of standard Enum Flags)
+          ▼
+┌───────────────────────────┐
+│ Deterministic Scoring Core│ ◄── Pure Python/Go/Rust Code
+│  (Calculates Sub-scores & │     Applies fixed weights, penalties,
+│   Final CIS Formula)      │     and hard knockout rules.
+└─────────┬─────────────────┘
+          │
+          ▼
+[ Final CIS + Explainable Audit Report ]
+
+
+
+Step 1: Define a Category Weight FrameworkDivide verification into independent categories and assign static weights $W_i$ that sum to $1.0$ (or $100\%$).
+
+Category (i),Weight (Wi​),Objective
+1. Identity Verification,0.20,"Matches Government ID, name, SSN/National ID, DOB"
+2. Employment History,0.30,"Validates job titles, tenure dates, company existence"
+3. Education & Credentials,0.20,"Degree verification, university accreditation"
+4. Document Authenticity,0.15,"Checks EXIF data, PDF manipulation, layout tampering"
+5. Claim Alignment (Resume vs JD/Checks),0.15,"Skill inflation, overlapping employment dates"
+
+Step 2: Use AI to Output Standardized "Anomaly Flags" (Not Numbers)
+Set your LLM temperature to 0 and use strict JSON schema/Pydantic validation. The AI's only job is to compare inputs and return a list of predefined Enum Flags with confidence levels.
+
+
+
+Step 3: Mathematical Deduction Engine (Pure Code)Each category starts with a perfect score of $100$. Your deterministic code applies fixed point deductions based on the flags extracted by the AI.
+
+
+
+
+Step 4: The Final Candidate Integrity Score (CIS) CalculationThe composite CIS is calculated using the weighted sum of all category scores:$$CIS = \sum_{i=1}^{N} \left( W_i \cdot S_i \right)$$
+
+
