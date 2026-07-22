@@ -47,15 +47,6 @@ The platform assists recruiters in making faster, data-driven hiring decisions w
 🚧 Proof of Concept (PoC)
 
 This project is currently under active development as a Proof of Concept to demonstrate AI-assisted pre-offer candidate verification.
-
-## Team
-
-**Pink Panthers**
-
-- Navaneethan G N
-- Aamer Shariff
-- Sivakumar N
-
 ---
 
 *CRUX – Building trust before the offer is made.*
